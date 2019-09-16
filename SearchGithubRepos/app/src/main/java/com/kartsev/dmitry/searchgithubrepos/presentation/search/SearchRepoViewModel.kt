@@ -11,7 +11,6 @@ import com.kartsev.dmitry.searchgithubrepos.domain.RepoRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,11 +21,16 @@ class SearchRepoViewModel @Inject constructor(
     private val repoRepository: RepoRepository
 ) : ViewModel(), LifecycleObserver {
     var lastQuery: String? = null
+    var savedLastVisibleItemPosition: Int? = null
     val searchResultLiveData = MutableLiveData<List<RepoData>>()
     val searchStateLiveData = MutableLiveData<SearchState>()
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         searchStateLiveData.postValue(Failed(exception.toString()))
+    }
+
+    init {
+        savedLastVisibleItemPosition = 0
     }
 
     fun setQuery(originalQuery: String) {
@@ -49,6 +53,7 @@ class SearchRepoViewModel @Inject constructor(
 
             searchResultLiveData.postValue(result)
             searchStateLiveData.postValue(Success())
+            savedLastVisibleItemPosition = 0
             Timber.d("searchRepo(): We have now ${result.size} items on \"$lastQuery\" query.")
         }
     }
@@ -60,6 +65,7 @@ class SearchRepoViewModel @Inject constructor(
     fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
         if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount) {
             if (lastQuery.isNullOrEmpty()) return
+            savedLastVisibleItemPosition = lastVisibleItemPosition
 
             searchStateLiveData.postValue(Running(false))
             viewModelScope.launch(coroutineExceptionHandler) {

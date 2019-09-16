@@ -111,6 +111,7 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
         searchRepoViewModel.searchResultLiveData.observe(this, Observer {
             Timber.d("Submit to adapter ${it.size} items.")
             listAdapter.submitList(it)
+            fragmentSearchRepoResultsList.scrollToPosition(searchRepoViewModel.savedLastVisibleItemPosition!!)
         })
     }
 

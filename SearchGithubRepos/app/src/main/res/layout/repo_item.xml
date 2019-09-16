@@ -101,6 +101,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:maxLines="5"
+            android:ellipsize="end"
             app:layout_constraintLeft_toLeftOf="@+id/textRepoDescriptionLabel"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textRepoDescriptionLabel"
