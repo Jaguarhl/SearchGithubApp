@@ -17,19 +17,23 @@ class RepoRepository @Inject constructor(
     private var isRequestInProgress = false
 
     suspend fun searchRepoByString(
-        string: String
+        query: String
     ): List<RepoData> {
-        val query = "%${string.replace(' ', '%')}%"
-        Timber.d("SearchRepoByString($query) START.")
         lastRequestedPage = 1
 
-        return requestAndCacheRepo(query)
+        return requestAndCacheRepo(query.prepareQueryString())
+    }
+
+    private fun String.prepareQueryString(): String {
+        val query = "%${replace(' ', '%')}%"
+        Timber.d("SearchRepoByString($query) START.")
+        return query
     }
 
     suspend fun requestMore(
         query: String
     ): List<RepoData> {
-        return requestAndCacheRepo(query)
+        return requestAndCacheRepo(query.prepareQueryString())
     }
 
     private suspend fun requestAndCacheRepo(

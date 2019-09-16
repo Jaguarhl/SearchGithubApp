@@ -40,6 +40,9 @@ data class RepoData(
         val url: String?
     )
 
+    fun getStarsCount(): String = stars.toString()
+    fun getForksCount(): String = forks.toString()
+
     companion object {
         const val TABLE_NAME = "repositories"
     }
