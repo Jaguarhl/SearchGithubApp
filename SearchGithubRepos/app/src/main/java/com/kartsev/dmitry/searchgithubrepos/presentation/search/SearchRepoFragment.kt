@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kartsev.dmitry.searchgithubrepos.R
@@ -105,6 +106,17 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
                 is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
                 is Running -> updateViews(true, it.firstRequest)
                 is Success -> updateViews(false, it.firstRequest)
+                is ShowDetailsAction -> {
+                    val bundle = Bundle()
+                    bundle.apply {
+                        putInt(REPO_ID, it.id)
+                        putString(REPO_OWNER, it.owner)
+                    }
+                    findNavController(this).navigate(
+                        R.id.action_searchRepoFragment_to_repoDetailsFragment,
+                        bundle
+                    )
+                }
             }
         })
 
@@ -165,4 +177,9 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
     }
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = childFragmentInjector
+
+    companion object {
+        const val REPO_ID = "REPO_ID"
+        const val REPO_OWNER = "REPO_OWNER"
+    }
 }

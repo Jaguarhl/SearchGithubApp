@@ -3,8 +3,12 @@ package com.kartsev.dmitry.searchgithubrepos.binding
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
+import android.util.Patterns
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.kartsev.dmitry.searchgithubrepos.R
 
 @BindingAdapter(
@@ -46,4 +50,14 @@ fun adapterHighlightPhrase(
     }
 
     view.text = spannableString
+}
+
+@BindingAdapter("app:image_url")
+fun displayImage(view: ImageView, uri: String?) {
+    if (uri.isNullOrEmpty() || !Patterns.WEB_URL.matcher(uri).matches()) return
+
+    Glide.with(view.context).load(uri)
+        .circleCrop()
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
+        .into(view)
 }

@@ -2,6 +2,7 @@ package com.kartsev.dmitry.searchgithubrepos.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.kartsev.dmitry.searchgithubrepos.presentation.details.RepoDetailsViewModel
 import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoViewModel
 import dagger.Binds
 import dagger.MapKey
@@ -32,4 +33,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SearchRepoViewModel::class)
     internal abstract fun searchRepoViewModel(viewModel: SearchRepoViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RepoDetailsViewModel::class)
+    internal abstract fun repoDetailsViewModel(viewModel: RepoDetailsViewModel): ViewModel
 }

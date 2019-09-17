@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/searchRepoFragment">
 
     <fragment
         android:id="@+id/searchRepoFragment"
-        android:name="com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment">
+        android:name="com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment"
+        android:label="Search"
+        tools:layout="@layout/fragment_search_repo">
+        <action
+            android:id="@+id/action_searchRepoFragment_to_repoDetailsFragment"
+            app:destination="@id/repoDetailsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/repoDetailsFragment"
+        android:name="com.kartsev.dmitry.searchgithubrepos.presentation.details.RepoDetailsFragment"
+        tools:layout="@layout/fragment_repo_details">
+        <action
+            android:id="@+id/action_repoDetailsFragment_to_placeholder"
+            app:destination="@id/placeholder" />
+        <action
+            android:id="@+id/action_repoDetailsFragment_to_searchRepoFragment"
+            app:destination="@id/searchRepoFragment" />
+    </fragment>
+
+    <fragment android:id="@+id/placeholder" />
 </navigation>

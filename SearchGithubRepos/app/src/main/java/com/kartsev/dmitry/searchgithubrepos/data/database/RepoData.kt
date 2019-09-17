@@ -37,7 +37,9 @@ data class RepoData(
         @field:SerializedName("login")
         val login: String,
         @field:SerializedName("url")
-        val url: String?
+        val url: String?,
+        @field:SerializedName("avatar_url")
+        val avatar: String?
     )
 
     fun getStarsCount(): String = stars.toString()

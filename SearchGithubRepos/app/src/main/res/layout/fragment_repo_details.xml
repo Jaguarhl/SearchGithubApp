@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout  xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.kartsev.dmitry.searchgithubrepos.presentation.details.RepoDetailsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/rootView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/primary_horizontal_margin">
+
+        <Button
+            android:id="@+id/fragmentRepoDetailsBtnReturn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/primary_horizontal_margin"
+            android:text="@android:string/ok"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextAuthor" />
+
+        <ImageView
+            android:id="@+id/fragmentRepoDetailsImageAuthorAva"
+            android:layout_width="@dimen/image_avatar_size"
+            android:layout_height="@dimen/image_avatar_size"
+            android:layout_marginStart="@dimen/secondary_horizontal_margin"
+            android:layout_marginTop="@dimen/secondary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            app:layout_constraintBottom_toBottomOf="@+id/fragmentRepoDetailsTextAuthor"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:image_url="@{viewModel.repoDetailsLiveData.owner.avatar}"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextRepoName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/secondary_horizontal_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@{viewModel.repoDetailsLiveData.fullName}"
+            app:layout_constraintLeft_toRightOf="@+id/fragmentRepoDetailsImageAuthorAva"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            tools:text="Repo full name" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextRepoLanguageLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/secondary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@string/label_repo_language"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoName" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextRepoLanguage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/secondary_horizontal_margin"
+            android:layout_marginTop="@dimen/secondary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@{viewModel.repoDetailsLiveData.language}"
+            app:layout_constraintLeft_toRightOf="@+id/fragmentRepoDetailsTextRepoLanguageLabel"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoName"
+            tools:text="Java / Kotlin" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextAuthorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/tertiary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@string/label_author"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoLanguage" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextAuthor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/secondary_horizontal_margin"
+            android:layout_marginTop="@dimen/tertiary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@{viewModel.repoDetailsLiveData.owner.login}"
+            app:layout_constraintLeft_toRightOf="@+id/fragmentRepoDetailsTextAuthorLabel"
+            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoLanguage"
+            tools:text="Jonatan" />
+
+        <TextView
+            android:id="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/secondary_horizontal_margin"
+            android:layout_marginTop="@dimen/secondary_vertical_margin"
+            android:layout_marginEnd="@dimen/secondary_horizontal_margin"
+            android:text="@string/label_repo_name"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toRightOf="@+id/fragmentRepoDetailsImageAuthorAva"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/fragmentRepoDetailsProgressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -10,7 +10,6 @@ import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
 import com.kartsev.dmitry.searchgithubrepos.domain.RepoRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,7 +22,7 @@ class SearchRepoViewModel @Inject constructor(
     var lastQuery: String? = null
     var savedLastVisibleItemPosition: Int? = null
     val searchResultLiveData = MutableLiveData<List<RepoData>>()
-    val searchStateLiveData = MutableLiveData<SearchState>()
+    val searchStateLiveData = MutableLiveData<SearchUIState>()
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         searchStateLiveData.postValue(Failed(exception.toString()))
@@ -59,7 +58,7 @@ class SearchRepoViewModel @Inject constructor(
     }
 
     fun repositoryItemClicked(repo: RepoData) {
-
+        searchStateLiveData.postValue(ShowDetailsAction(repo.id, repo.owner.login))
     }
 
     fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
@@ -80,11 +79,6 @@ class SearchRepoViewModel @Inject constructor(
                 Timber.d("listScrolled(): We have now ${result.size} items on \"$lastQuery\" query.")
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.cancel()
     }
 
     companion object {

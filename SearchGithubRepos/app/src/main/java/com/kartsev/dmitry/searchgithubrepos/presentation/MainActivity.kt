@@ -3,6 +3,8 @@ package com.kartsev.dmitry.searchgithubrepos.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.kartsev.dmitry.searchgithubrepos.R
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector

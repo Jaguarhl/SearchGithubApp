@@ -16,4 +16,7 @@ interface RepoDao {
 
     @Query("DELETE FROM $TABLE_NAME;")
     suspend fun clear()
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE (id LIKE :id) AND (owner_login LIKE :owner);")
+    suspend fun repoById(id: Int, owner: String): RepoData
 }
