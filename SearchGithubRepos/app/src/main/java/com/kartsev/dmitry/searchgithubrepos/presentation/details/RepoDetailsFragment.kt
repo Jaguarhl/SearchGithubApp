@@ -36,6 +36,8 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
     var binding by autoCleared<FragmentRepoDetailsBinding>()
     private lateinit var repoDetailsViewModel: RepoDetailsViewModel
 
+    private val params by navArgs<RepoDetailsFragmentArgs>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,8 +75,8 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
 
     private fun initListeners() {
         fragmentRepoDetailsBtnReturn.setOnClickListener {
-            NavHostFragment.findNavController(this)
-                .popBackStack(R.id.action_searchRepoFragment_to_repoDetailsFragment, true)
+//            NavHostFragment.findNavController(this)
+//                .popBackStack(R.id.action_searchRepoFragment_to_repoDetailsFragment, true)
         }
     }
 
@@ -87,6 +89,8 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
             }
         })
     }
+
+    private fun navController() = NavHostFragment.findNavController(this)
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = childFragmentInjector
 }

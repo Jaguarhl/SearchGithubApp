@@ -112,9 +112,8 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
                         putInt(REPO_ID, it.id)
                         putString(REPO_OWNER, it.owner)
                     }
-                    findNavController(this).navigate(
-                        R.id.action_searchRepoFragment_to_repoDetailsFragment,
-                        bundle
+                    navController().navigate(
+                        SearchRepoFragmentDirections.showRepoDetails(it.owner, it.id)
                     )
                 }
             }
@@ -175,6 +174,8 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
             }
         })
     }
+
+    private fun navController() = findNavController(this)
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> = childFragmentInjector
 

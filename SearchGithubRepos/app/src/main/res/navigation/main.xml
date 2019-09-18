@@ -7,23 +7,24 @@
     <fragment
         android:id="@+id/searchRepoFragment"
         android:name="com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment"
-        android:label="Search"
+        android:label="SearchRepoFragment"
         tools:layout="@layout/fragment_search_repo">
         <action
-            android:id="@+id/action_searchRepoFragment_to_repoDetailsFragment"
+            android:id="@+id/showRepoDetails"
             app:destination="@id/repoDetailsFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/repoDetailsFragment"
         android:name="com.kartsev.dmitry.searchgithubrepos.presentation.details.RepoDetailsFragment"
+        android:label="RepoDetailsFragment"
         tools:layout="@layout/fragment_repo_details">
-        <action
-            android:id="@+id/action_repoDetailsFragment_to_placeholder"
-            app:destination="@id/placeholder" />
-        <action
-            android:id="@+id/action_repoDetailsFragment_to_searchRepoFragment"
-            app:destination="@id/searchRepoFragment" />
+        <argument
+            android:name="owner"
+            app:argType="string" />
+        <argument
+            android:name="id"
+            app:argType="integer" />
     </fragment>
 
     <fragment android:id="@+id/placeholder" />
