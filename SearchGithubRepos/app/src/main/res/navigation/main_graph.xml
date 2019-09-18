@@ -6,8 +6,7 @@
     app:startDestination="@id/searchRepoFragment">
 
     <action android:id="@+id/globalToSearchRepoFragment"
-        app:destination="@id/searchRepoFragment"
-        app:launchSingleTop="true"/>
+        app:destination="@id/searchRepoFragment"/>
 
     <fragment
         android:id="@+id/searchRepoFragment"
@@ -17,11 +16,10 @@
         <action
             android:id="@+id/showRepoDetails"
             app:destination="@id/repoDetailsFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
             app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"/>
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -31,11 +29,16 @@
         tools:layout="@layout/fragment_repo_details">
         <action
             android:id="@+id/backToSearchFragment"
-            app:popUpTo="@id/searchRepoFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right"
+            app:destination="@+id/mainNav"
             app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"/>
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="id"
+            app:argType="integer" />
+        <argument
+            android:name="owner"
+            app:argType="string" />
     </fragment>
 </navigation>

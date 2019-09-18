@@ -73,7 +73,9 @@ class SearchRepoFragment : Fragment(), Injectable {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(LAST_QUERY_STRING, searchRepoViewModel.lastQuery)
+        fragmentSearchRepoInput?.let {
+            outState.putString(LAST_QUERY_STRING, it.text.toString())
+        }
     }
 
     private fun initSearch(query: String) {
@@ -111,14 +113,8 @@ class SearchRepoFragment : Fragment(), Injectable {
                 is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
                 is Running -> updateViews(true, it.firstRequest)
                 is Success -> updateViews(false, it.firstRequest)
-                is ShowDetailsAction -> {
-                    val bundle = Bundle()
-                    bundle.apply {
-                        putInt(REPO_ID, it.id)
-                        putString(REPO_OWNER, it.owner)
-                    }
-                    navController().navigate(R.id.showRepoDetails, bundle)
-                }
+                is ShowDetailsAction -> navController()
+                    .navigate(SearchRepoFragmentDirections.showRepoDetails(it.id, it.owner))
             }
         })
 
@@ -183,8 +179,6 @@ class SearchRepoFragment : Fragment(), Injectable {
     private fun navController() = findNavController()
 
     companion object {
-        const val REPO_ID = "REPO_ID"
-        const val REPO_OWNER = "REPO_OWNER"
         const val LAST_QUERY_STRING = "LAST_QUERY_STRING"
     }
 }

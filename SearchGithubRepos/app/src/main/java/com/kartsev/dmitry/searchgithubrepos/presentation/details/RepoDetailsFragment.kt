@@ -11,29 +11,25 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.kartsev.dmitry.searchgithubrepos.MainNavDirections
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.binding.FragmentDataBindingComponent
 import com.kartsev.dmitry.searchgithubrepos.databinding.FragmentRepoDetailsBinding
 import com.kartsev.dmitry.searchgithubrepos.di.Injectable
-import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment.Companion.REPO_ID
-import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment.Companion.REPO_OWNER
 import com.kartsev.dmitry.searchgithubrepos.util.autoCleared
-import dagger.android.DispatchingAndroidInjector
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import javax.inject.Inject
 
 class RepoDetailsFragment : Fragment(), Injectable {
-    @Inject
-    lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
-
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
 
     private var dataBindingComponent: DataBindingComponent = FragmentDataBindingComponent(this)
     var binding by autoCleared<FragmentRepoDetailsBinding>()
     private lateinit var repoDetailsViewModel: RepoDetailsViewModel
+    private val args by navArgs<RepoDetailsFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,14 +50,15 @@ class RepoDetailsFragment : Fragment(), Injectable {
 
         repoDetailsViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(RepoDetailsViewModel::class.java)
+
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
             viewModel = repoDetailsViewModel
         }
 
-        arguments?.apply {
-            val repoId = getInt(REPO_ID)
-            val repoOwner = getString(REPO_OWNER) ?: ""
+        args.apply {
+            val repoId = id
+            val repoOwner = owner
 
             repoDetailsViewModel.initializeByDetails(repoId, repoOwner)
         }
@@ -72,7 +69,7 @@ class RepoDetailsFragment : Fragment(), Injectable {
 
     private fun initListeners() {
         fragmentRepoDetailsBtnReturn.setOnClickListener {
-            navController().navigate(MainNavDirections.globalToSearchRepoFragment())
+//            navController().navigate(MainNavDirections.globalToSearchRepoFragment())
         }
     }
 
