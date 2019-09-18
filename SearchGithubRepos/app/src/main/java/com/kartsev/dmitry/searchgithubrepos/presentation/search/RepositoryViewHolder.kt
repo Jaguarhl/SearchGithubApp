@@ -1,4 +1,4 @@
-package com.kartsev.dmitry.searchgithubrepos.presentation.adapter
+package com.kartsev.dmitry.searchgithubrepos.presentation.search
 
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
 import androidx.recyclerview.widget.RecyclerView

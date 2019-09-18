@@ -1,4 +1,4 @@
-package com.kartsev.dmitry.searchgithubrepos.presentation.adapter
+package com.kartsev.dmitry.searchgithubrepos.presentation.search
 
 import android.view.LayoutInflater
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
@@ -7,14 +7,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.databinding.RepoItemBinding
-import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoViewModel
 
 class RepositoriesAdapter(
     val viewModel: SearchRepoViewModel
-) : ListAdapter<RepoData, RepositoryViewHolder>(REPO_COMPARATOR) {
+) : ListAdapter<RepoData, RepositoryViewHolder>(
+    REPO_COMPARATOR
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)

@@ -2,7 +2,12 @@
 <navigation xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainNav"
     app:startDestination="@id/searchRepoFragment">
+
+    <action android:id="@+id/globalToSearchRepoFragment"
+        app:destination="@id/searchRepoFragment"
+        app:launchSingleTop="true"/>
 
     <fragment
         android:id="@+id/searchRepoFragment"
@@ -11,7 +16,12 @@
         tools:layout="@layout/fragment_search_repo">
         <action
             android:id="@+id/showRepoDetails"
-            app:destination="@id/repoDetailsFragment" />
+            app:destination="@id/repoDetailsFragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
 
     <fragment
@@ -19,13 +29,13 @@
         android:name="com.kartsev.dmitry.searchgithubrepos.presentation.details.RepoDetailsFragment"
         android:label="RepoDetailsFragment"
         tools:layout="@layout/fragment_repo_details">
-        <argument
-            android:name="owner"
-            app:argType="string" />
-        <argument
-            android:name="id"
-            app:argType="integer" />
+        <action
+            android:id="@+id/backToSearchFragment"
+            app:popUpTo="@id/searchRepoFragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"/>
     </fragment>
-
-    <fragment android:id="@+id/placeholder" />
 </navigation>

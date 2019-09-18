@@ -10,8 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
+import com.kartsev.dmitry.searchgithubrepos.MainNavDirections
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.binding.FragmentDataBindingComponent
 import com.kartsev.dmitry.searchgithubrepos.databinding.FragmentRepoDetailsBinding
@@ -19,13 +20,11 @@ import com.kartsev.dmitry.searchgithubrepos.di.Injectable
 import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment.Companion.REPO_ID
 import com.kartsev.dmitry.searchgithubrepos.presentation.search.SearchRepoFragment.Companion.REPO_OWNER
 import com.kartsev.dmitry.searchgithubrepos.util.autoCleared
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.fragment_repo_details.*
 import javax.inject.Inject
 
-class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
+class RepoDetailsFragment : Fragment(), Injectable {
     @Inject
     lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
 
@@ -35,8 +34,6 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
     private var dataBindingComponent: DataBindingComponent = FragmentDataBindingComponent(this)
     var binding by autoCleared<FragmentRepoDetailsBinding>()
     private lateinit var repoDetailsViewModel: RepoDetailsViewModel
-
-    private val params by navArgs<RepoDetailsFragmentArgs>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +55,7 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
         repoDetailsViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(RepoDetailsViewModel::class.java)
         binding.apply {
-            lifecycleOwner = this@RepoDetailsFragment
+            lifecycleOwner = viewLifecycleOwner
             viewModel = repoDetailsViewModel
         }
 
@@ -75,8 +72,7 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
 
     private fun initListeners() {
         fragmentRepoDetailsBtnReturn.setOnClickListener {
-//            NavHostFragment.findNavController(this)
-//                .popBackStack(R.id.action_searchRepoFragment_to_repoDetailsFragment, true)
+            navController().navigate(MainNavDirections.globalToSearchRepoFragment())
         }
     }
 
@@ -90,7 +86,5 @@ class RepoDetailsFragment : Fragment(), HasSupportFragmentInjector, Injectable {
         })
     }
 
-    private fun navController() = NavHostFragment.findNavController(this)
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = childFragmentInjector
+    private fun navController() = findNavController()
 }

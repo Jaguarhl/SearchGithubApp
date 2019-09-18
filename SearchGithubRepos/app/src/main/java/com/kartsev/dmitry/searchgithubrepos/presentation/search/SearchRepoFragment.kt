@@ -13,25 +13,22 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.binding.FragmentDataBindingComponent
 import com.kartsev.dmitry.searchgithubrepos.databinding.FragmentSearchRepoBinding
 import com.kartsev.dmitry.searchgithubrepos.di.Injectable
-import com.kartsev.dmitry.searchgithubrepos.presentation.adapter.RepositoriesAdapter
 import com.kartsev.dmitry.searchgithubrepos.util.autoCleared
 import com.kartsev.dmitry.searchgithubrepos.util.hideKeyboard
-import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.fragment_search_repo.*
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
-class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
+class SearchRepoFragment : Fragment(), Injectable {
     @Inject
     lateinit var childFragmentInjector: DispatchingAndroidInjector<Fragment>
 
@@ -40,7 +37,7 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
 
     private var dataBindingComponent: DataBindingComponent = FragmentDataBindingComponent(this)
     var binding by autoCleared<FragmentSearchRepoBinding>()
-    var listAdapter by autoCleared<RepositoriesAdapter>()
+    private var listAdapter by autoCleared<RepositoriesAdapter>()
     lateinit var searchRepoViewModel: SearchRepoViewModel
 
     override fun onCreateView(
@@ -57,18 +54,26 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         searchRepoViewModel =
             ViewModelProviders.of(this, viewModelFactory).get(SearchRepoViewModel::class.java)
-        binding.lifecycleOwner = viewLifecycleOwner
-        binding.viewModel = searchRepoViewModel
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            viewModel = searchRepoViewModel
+        }
 
         initRecyclerList()
         setupScrollListener()
         initLiveDataObservers()
-        initSearch(searchRepoViewModel.lastQuery ?: "")
+        val query = savedInstanceState?.getString(LAST_QUERY_STRING) ?: ""
+        initSearch(query)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(LAST_QUERY_STRING, searchRepoViewModel.lastQuery)
     }
 
     private fun initSearch(query: String) {
@@ -112,9 +117,7 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
                         putInt(REPO_ID, it.id)
                         putString(REPO_OWNER, it.owner)
                     }
-                    navController().navigate(
-                        SearchRepoFragmentDirections.showRepoDetails(it.owner, it.id)
-                    )
+                    navController().navigate(R.id.showRepoDetails, bundle)
                 }
             }
         })
@@ -149,7 +152,9 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
     }
 
     private fun initRecyclerList() {
-        listAdapter = RepositoriesAdapter(searchRepoViewModel)
+        listAdapter = RepositoriesAdapter(
+            searchRepoViewModel
+        )
         with(fragmentSearchRepoResultsList) {
             layoutManager = LinearLayoutManager(context)
             adapter = listAdapter
@@ -175,12 +180,11 @@ class SearchRepoFragment : Fragment(), HasSupportFragmentInjector, Injectable {
         })
     }
 
-    private fun navController() = findNavController(this)
-
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> = childFragmentInjector
+    private fun navController() = findNavController()
 
     companion object {
         const val REPO_ID = "REPO_ID"
         const val REPO_OWNER = "REPO_OWNER"
+        const val LAST_QUERY_STRING = "LAST_QUERY_STRING"
     }
 }
