@@ -32,10 +32,12 @@ class RepositoriesAdapter(
     companion object {
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<RepoData>() {
             override fun areItemsTheSame(oldItem: RepoData, newItem: RepoData): Boolean =
-                oldItem.fullName == newItem.fullName
+                oldItem.name == newItem.name
+                    && oldItem.owner == newItem.owner
 
             override fun areContentsTheSame(oldItem: RepoData, newItem: RepoData): Boolean =
-                oldItem == newItem
+                oldItem.description == newItem.description
+                    && oldItem.fullName == newItem.fullName
         }
     }
 }

@@ -10,6 +10,7 @@ import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
 import com.kartsev.dmitry.searchgithubrepos.domain.RepoRepository
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,6 +24,7 @@ class SearchRepoViewModel @Inject constructor(
     var savedLastVisibleItemPosition: Int? = null
     val searchResultLiveData = MutableLiveData<List<RepoData>>()
     val searchStateLiveData = MutableLiveData<SearchUIState>()
+    lateinit var searchJob: Job
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
         searchStateLiveData.postValue(Failed(exception.toString()))
@@ -43,7 +45,7 @@ class SearchRepoViewModel @Inject constructor(
         if (lastQuery.isNullOrEmpty()) return
 
         searchStateLiveData.postValue(Running())
-        viewModelScope.launch(coroutineExceptionHandler) {
+        searchJob = viewModelScope.launch(coroutineExceptionHandler) {
             val result = withContext(Dispatchers.IO) {
                 repoRepository.searchRepoByString(lastQuery!!)
             }
@@ -62,12 +64,14 @@ class SearchRepoViewModel @Inject constructor(
     }
 
     fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
-        if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount) {
+        if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount
+            && !searchJob.isActive) {
             if (lastQuery.isNullOrEmpty()) return
             savedLastVisibleItemPosition = lastVisibleItemPosition
 
             searchStateLiveData.postValue(Running(false))
-            viewModelScope.launch(coroutineExceptionHandler) {
+
+            searchJob = viewModelScope.launch(coroutineExceptionHandler) {
                 val result = withContext(Dispatchers.IO) {
                     repoRepository.requestMore(lastQuery!!)
                 }

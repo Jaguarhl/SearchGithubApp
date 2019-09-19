@@ -121,13 +121,11 @@ class SearchRepoFragment : Fragment(), Injectable {
         searchRepoViewModel.searchResultLiveData.observe(this, Observer {
             Timber.d("Submit to adapter ${it.size} items.")
             listAdapter.submitList(it)
-            fragmentSearchRepoResultsList.scrollToPosition(searchRepoViewModel.savedLastVisibleItemPosition!!)
         })
     }
 
     private fun updateViews(visible: Boolean, firstRequest: Boolean) {
         val flag = if (visible) {
-            listAdapter.submitList(null)
             fragmentSearchRepoInput.isEnabled = false
             View.VISIBLE
         } else {
