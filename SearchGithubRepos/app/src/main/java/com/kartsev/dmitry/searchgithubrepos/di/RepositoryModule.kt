@@ -1,5 +1,6 @@
 package com.kartsev.dmitry.searchgithubrepos.di
 
+import com.kartsev.dmitry.searchgithubrepos.data.database.QueryDao
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoDao
 import com.kartsev.dmitry.searchgithubrepos.data.network.GithubApi
 import com.kartsev.dmitry.searchgithubrepos.domain.RepoRepository
@@ -11,6 +12,6 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideRepoRepository(repoDao: RepoDao, githubApi: GithubApi): RepoRepository =
-        RepoRepository(repoDao, githubApi)
+    fun provideRepoRepository(repoDao: RepoDao, queryDao: QueryDao, githubApi: GithubApi): RepoRepository =
+        RepoRepository(repoDao, queryDao, githubApi)
 }

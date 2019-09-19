@@ -1,5 +1,6 @@
 package com.kartsev.dmitry.searchgithubrepos.data.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
@@ -12,7 +13,7 @@ interface RepoDao {
     suspend fun save(list: List<RepoData>): List<Long>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE (name LIKE :query) OR (description LIKE :query) ORDER BY stars DESC, name ASC;")
-    suspend fun reposByQuery(query: String): List<RepoData>
+    suspend fun reposByQuery(query: String): LiveData<List<RepoData>>
 
     @Query("DELETE FROM $TABLE_NAME;")
     suspend fun clear()

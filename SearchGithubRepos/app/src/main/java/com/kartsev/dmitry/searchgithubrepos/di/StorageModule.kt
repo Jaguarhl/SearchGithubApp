@@ -21,4 +21,8 @@ class StorageModule {
     @Provides
     @Singleton
     fun provideRepoDao(db: AppDatabase) = db.repoDao()
+
+    @Provides
+    @Singleton
+    fun provideQueryDao(db: AppDatabase) = db.queryDao()
 }

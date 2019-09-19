@@ -1,5 +1,7 @@
 package com.kartsev.dmitry.searchgithubrepos.domain
 
+import androidx.lifecycle.LiveData
+import com.kartsev.dmitry.searchgithubrepos.data.database.QueryDao
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoDao
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
 import com.kartsev.dmitry.searchgithubrepos.data.network.GithubApi
@@ -10,6 +12,7 @@ import javax.inject.Inject
 
 class RepoRepository @Inject constructor(
     private val repoDao: RepoDao,
+    private val queryDao: QueryDao,
     private val githubApi: GithubApi
 ): BaseRepository() {
 
@@ -18,10 +21,16 @@ class RepoRepository @Inject constructor(
 
     suspend fun searchRepoByString(
         query: String
-    ): List<RepoData> {
+    ): LiveData<List<RepoData>> {
         lastRequestedPage = 1
 
-        return requestAndCacheRepo(query.prepareQueryString())
+        val cachedData = queryDao.getCachedQuery(query)
+        return if (cachedData != null && !cachedData.repoIds.isNullOrEmpty())
+        {
+            lastRequestedPage = cachedData.nextPage
+            queryDao.loadOrdered(cachedData.repoIds)
+        }
+        else requestAndCacheRepo(query.prepareQueryString())
     }
 
     private fun String.prepareQueryString(): String {
@@ -32,14 +41,15 @@ class RepoRepository @Inject constructor(
 
     suspend fun requestMore(
         query: String
-    ): List<RepoData> {
+    ): LiveData<List<RepoData>> {
         return requestAndCacheRepo(query.prepareQueryString())
     }
 
     private suspend fun requestAndCacheRepo(
         query: String
-    ): List<RepoData> {
+    ): LiveData<List<RepoData>> {
         val cachedData = repoDao.reposByQuery(query)
+        val cachedQuery = queryDao.getCachedQuery(query)
         if (isRequestInProgress) return cachedData
 
         isRequestInProgress = true
@@ -49,6 +59,7 @@ class RepoRepository @Inject constructor(
         )
 
         if (result?.items != null) {
+            val cachedRepoIds = cachedQuery?.repoIds ?: listOf()
             lastRequestedPage++
             try {
                 repoDao.save(result.items)

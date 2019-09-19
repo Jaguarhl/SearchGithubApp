@@ -149,6 +149,7 @@ class SearchRepoFragment : Fragment(), Injectable {
 
     private fun initRecyclerList() {
         listAdapter = RepositoriesAdapter(
+            dataBindingComponent,
             searchRepoViewModel
         )
         with(fragmentSearchRepoResultsList) {
