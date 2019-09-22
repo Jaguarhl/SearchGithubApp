@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import com.kartsev.dmitry.searchgithubrepos.MainNavDirections
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.binding.FragmentDataBindingComponent
 import com.kartsev.dmitry.searchgithubrepos.databinding.FragmentRepoDetailsBinding
@@ -69,7 +68,7 @@ class RepoDetailsFragment : Fragment(), Injectable {
 
     private fun initListeners() {
         fragmentRepoDetailsBtnReturn.setOnClickListener {
-//            navController().navigate(MainNavDirections.globalToSearchRepoFragment())
+            navController().navigateUp()
         }
     }
 
@@ -78,6 +77,11 @@ class RepoDetailsFragment : Fragment(), Injectable {
             when (it) {
                 is Running -> fragmentRepoDetailsProgressLayout.visibility = View.VISIBLE
                 is Successful -> fragmentRepoDetailsProgressLayout.visibility = View.GONE
+            }
+        })
+
+        repoDetailsViewModel.repoDetailsUIEventState.observe(this, Observer {
+            when (it) {
                 is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
             }
         })

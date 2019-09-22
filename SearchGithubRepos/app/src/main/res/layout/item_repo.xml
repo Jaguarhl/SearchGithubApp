@@ -14,7 +14,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/layoutRepoItem"
+        android:id="@+id/repoItemLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/row_item_margin_horizontal"
@@ -22,23 +22,31 @@
         android:onClick="@{() -> viewModel.repositoryItemClicked(observable)}">
 
         <ImageView
-            android:id="@+id/star"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/repoItemStarIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:src="@drawable/ic_star"
-            app:layout_constraintBottom_toBottomOf="@id/repoForks"
-            app:layout_constraintEnd_toStartOf="@id/repoStars" />
+            android:scaleType="fitCenter"
+            android:tint="@color/colorIconsTint"
+            android:layout_marginEnd="@dimen/tertiary_horizontal_margin"
+            app:layout_constraintTop_toTopOf="@id/repoItemTextRepoNameLabel"
+            app:layout_constraintBottom_toBottomOf="@id/repoItemTextRepoNameLabel"
+            app:layout_constraintEnd_toStartOf="@id/repoItemStarsText" />
 
         <ImageView
-            android:id="@+id/forks"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/repoItemForksIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
             android:src="@drawable/ic_git_branch"
-            app:layout_constraintBottom_toBottomOf="@id/repoForks"
-            app:layout_constraintEnd_toStartOf="@id/repoForks" />
+            android:scaleType="fitCenter"
+            android:tint="@color/colorIconsTint"
+            android:layout_marginEnd="@dimen/tertiary_horizontal_margin"
+            app:layout_constraintTop_toTopOf="@id/repoItemTextRepoNameLabel"
+            app:layout_constraintBottom_toBottomOf="@id/repoItemTextRepoNameLabel"
+            app:layout_constraintEnd_toStartOf="@id/repoItemForksText" />
 
         <TextView
-            android:id="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            android:id="@+id/repoItemTextRepoNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/secondary_horizontal_margin"
@@ -50,92 +58,90 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/repoStars"
+            android:id="@+id/repoItemStarsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{observable.starsCount}"
-            android:textSize="@dimen/repo_description_size"
-            app:layout_constraintBottom_toBottomOf="@id/repoForks"
-            app:layout_constraintEnd_toStartOf="@id/forks"
+            app:layout_constraintBottom_toBottomOf="@id/repoItemForksText"
+            app:layout_constraintEnd_toStartOf="@id/repoItemForksIcon"
             tools:text="30" />
 
         <TextView
-            android:id="@+id/repoForks"
+            android:id="@+id/repoItemForksText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/primary_horizontal_margin"
             android:text="@{observable.forksCount}"
-            android:textSize="@dimen/repo_description_size"
-            app:layout_constraintBottom_toBottomOf="@id/fragmentRepoDetailsTextRepoNameLabel"
+            app:layout_constraintBottom_toBottomOf="@id/repoItemTextRepoNameLabel"
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="30" />
 
         <TextView
-            android:id="@+id/fragmentRepoDetailsTextRepoName"
+            android:id="@+id/repoItemNameText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
-            app:layout_constraintLeft_toLeftOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            app:layout_constraintLeft_toLeftOf="@+id/repoItemTextRepoNameLabel"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/repoItemTextRepoNameLabel"
             app:search_highlight_messages="@{true}"
             app:search_phrase="@{viewModel.lastQuery}"
             app:search_text="@{observable.name}"
             tools:text="Repo full name" />
 
         <TextView
-            android:id="@+id/textRepoDescriptionLabel"
+            android:id="@+id/repoItemDescriptionLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
-            android:text="@string/repository_description_label"
+            android:text="@string/label_repository_description"
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
-            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoName" />
+            app:layout_constraintLeft_toLeftOf="@+id/repoItemTextRepoNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/repoItemNameText" />
 
         <TextView
-            android:id="@+id/textRepoDescription"
+            android:id="@+id/repoItemDescriptionText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
             android:maxLines="5"
             android:ellipsize="end"
-            app:layout_constraintLeft_toLeftOf="@+id/textRepoDescriptionLabel"
+            app:layout_constraintLeft_toLeftOf="@+id/repoItemDescriptionLabelText"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textRepoDescriptionLabel"
+            app:layout_constraintTop_toBottomOf="@+id/repoItemDescriptionLabelText"
             app:search_highlight_messages="@{true}"
             app:search_phrase="@{viewModel.lastQuery}"
             app:search_text="@{observable.description}"
             tools:text="Description." />
 
         <TextView
-            android:id="@+id/fragmentRepoDetailsTextRepoLanguageLabel"
+            android:id="@+id/repoItemLanguageLabelText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
             android:text="@string/label_repo_language"
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="@+id/fragmentRepoDetailsTextRepoNameLabel"
-            app:layout_constraintTop_toBottomOf="@+id/textRepoDescription" />
+            app:layout_constraintLeft_toLeftOf="@+id/repoItemTextRepoNameLabel"
+            app:layout_constraintTop_toBottomOf="@+id/repoItemDescriptionText" />
 
         <TextView
-            android:id="@+id/fragmentRepoDetailsTextRepoLanguage"
+            android:id="@+id/repoItemLanguageText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/secondary_horizontal_margin"
             android:layout_marginTop="@dimen/tertiary_vertical_margin"
             android:layout_marginEnd="@dimen/secondary_horizontal_margin"
             android:text="@{observable.language}"
-            app:layout_constraintLeft_toRightOf="@+id/fragmentRepoDetailsTextRepoLanguageLabel"
+            app:layout_constraintLeft_toRightOf="@+id/repoItemLanguageLabelText"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textRepoDescription" />
+            app:layout_constraintTop_toBottomOf="@+id/repoItemDescriptionText" />
 
         <View
-            android:id="@+id/viewLine"
+            android:id="@+id/repoItemLineView"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginStart="@dimen/secondary_horizontal_margin"
@@ -145,7 +151,7 @@
             android:background="@color/colorDarkGrey"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fragmentRepoDetailsTextRepoLanguage" />
+            app:layout_constraintTop_toBottomOf="@+id/repoItemLanguageText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

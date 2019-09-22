@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.kartsev.dmitry.searchgithubrepos.R
 import com.kartsev.dmitry.searchgithubrepos.binding.FragmentDataBindingComponent
@@ -110,9 +111,14 @@ class SearchRepoFragment : Fragment(), Injectable {
     private fun initLiveDataObservers() {
         searchRepoViewModel.searchStateLiveData.observe(this, Observer {
             when (it) {
-                is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
                 is Running -> updateViews(true, it.firstRequest)
                 is Success -> updateViews(false, it.firstRequest)
+            }
+        })
+
+        searchRepoViewModel.searchUIEvents.observe(this, Observer {
+            when (it) {
+                is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
                 is ShowDetailsAction -> navController()
                     .navigate(SearchRepoFragmentDirections.showRepoDetails(it.id, it.owner))
             }
@@ -125,24 +131,16 @@ class SearchRepoFragment : Fragment(), Injectable {
     }
 
     private fun updateViews(visible: Boolean, firstRequest: Boolean) {
-        val flag = if (visible) {
-            fragmentSearchRepoInput.isEnabled = false
-            View.VISIBLE
-        } else {
-            fragmentSearchRepoInput.isEnabled = true
-            View.GONE
-        }
+        val flag = if (visible) View.VISIBLE else View.GONE
 
-        (flag).also {
-            fragmentSearchRepoProgressLayout.visibility = it
+        flag.also {
             if (firstRequest) {
-                fragmentSearchRepoProgressInitial.visibility = it
+                fragmentSearchRepoProgressLayout.visibility = it
+                fragmentSearchRepoResultsList.scrollToPosition(0)
             } else {
-                fragmentSearchRepoProgressHorizontal.visibility = it
+                fragmentSearchRepoProgressMoreLayout.visibility = it
             }
         }
-
-        if (firstRequest) fragmentSearchRepoResultsList.scrollToPosition(0)
     }
 
     private fun initRecyclerList() {
@@ -156,20 +154,15 @@ class SearchRepoFragment : Fragment(), Injectable {
     }
 
     private fun setupScrollListener() {
-        val layoutManager = fragmentSearchRepoResultsList.layoutManager as LinearLayoutManager
-        fragmentSearchRepoResultsList.addOnScrollListener(object :
-            androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
-            override fun onScrolled(
-                recyclerView: androidx.recyclerview.widget.RecyclerView,
-                dx: Int,
-                dy: Int
-            ) {
-                super.onScrolled(recyclerView, dx, dy)
-                val totalItemCount = layoutManager.itemCount
-                val visibleItemCount = layoutManager.childCount
-                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+        fragmentSearchRepoResultsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy < 0) return
 
-                searchRepoViewModel.listScrolled(visibleItemCount, lastVisibleItem, totalItemCount)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastPosition = layoutManager.findLastVisibleItemPosition()
+                if (lastPosition == listAdapter.itemCount - 1) {
+                    searchRepoViewModel.loadNextPage()
+                }
             }
         })
     }

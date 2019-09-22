@@ -4,6 +4,7 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BackgroundColorSpan
 import android.util.Patterns
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
@@ -60,4 +61,9 @@ fun displayImage(view: ImageView, uri: String?) {
         .circleCrop()
         .diskCacheStrategy(DiskCacheStrategy.ALL)
         .into(view)
+}
+
+@BindingAdapter("app:view_visibility")
+fun setViewVisibility(view: View, visible: Boolean) = with(view) {
+    visibility = if (visible) View.VISIBLE else View.GONE
 }

@@ -1,33 +1,34 @@
 package com.kartsev.dmitry.searchgithubrepos.presentation.search
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kartsev.dmitry.searchgithubrepos.data.database.RepoData
 import com.kartsev.dmitry.searchgithubrepos.domain.RepoRepository
+import com.kartsev.dmitry.searchgithubrepos.util.SingleLiveEvent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 
 class SearchRepoViewModel @Inject constructor(
     private val repoRepository: RepoRepository
-) : ViewModel(), LifecycleObserver {
+) : ViewModel() {
     var lastQuery: String? = null
     var savedLastVisibleItemPosition: Int? = null
+    val query = MutableLiveData<String>()
     val searchResultLiveData = MutableLiveData<List<RepoData>>()
-    val searchStateLiveData = MutableLiveData<SearchUIState>()
-    lateinit var searchJob: Job
+    val searchStateLiveData = MutableLiveData<SearchResultState>()
+    val searchUIEvents = SingleLiveEvent<SearchUIEventState>()
 
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-        searchStateLiveData.postValue(Failed(exception.toString()))
+        searchUIEvents.postValue(Failed(exception.toString()))
+    }
+
+    companion object {
+        const val LOADING_MORE_DELAY: Long = 300
     }
 
     init {
@@ -36,56 +37,46 @@ class SearchRepoViewModel @Inject constructor(
 
     fun setQuery(originalQuery: String) {
         if (originalQuery == lastQuery) return
-        lastQuery = originalQuery
+
+        originalQuery.also {
+            lastQuery = it
+            query.value = it
+        }
         searchRepo()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun searchRepo() {
+    private fun searchRepo() {
         if (lastQuery.isNullOrEmpty()) return
 
         searchStateLiveData.postValue(Running())
-        searchJob = viewModelScope.launch(coroutineExceptionHandler) {
+        viewModelScope.launch(coroutineExceptionHandler) {
             val result = withContext(Dispatchers.IO) {
                 repoRepository.searchRepoByString(lastQuery!!)
             }
 
-            if (!isActive) return@launch
-
             searchResultLiveData.postValue(result)
             searchStateLiveData.postValue(Success())
             savedLastVisibleItemPosition = 0
-            Timber.d("searchRepo(): We have now ${result.size} items on \"$lastQuery\" query.")
         }
     }
 
     fun repositoryItemClicked(repo: RepoData) {
-        searchStateLiveData.postValue(ShowDetailsAction(repo.id, repo.owner.login))
+        searchUIEvents.postValue(ShowDetailsAction(repo.id, repo.owner.login))
     }
 
-    fun listScrolled(visibleItemCount: Int, lastVisibleItemPosition: Int, totalItemCount: Int) {
-        if (visibleItemCount + lastVisibleItemPosition + VISIBLE_THRESHOLD >= totalItemCount
-            && !searchJob.isActive) {
-            if (lastQuery.isNullOrEmpty()) return
-            savedLastVisibleItemPosition = lastVisibleItemPosition
+    fun loadNextPage() {
+        if (lastQuery.isNullOrEmpty()) return
 
-            searchStateLiveData.postValue(Running(false))
+        searchStateLiveData.postValue(Running(false))
 
-            searchJob = viewModelScope.launch(coroutineExceptionHandler) {
-                val result = withContext(Dispatchers.IO) {
-                    repoRepository.requestMore(lastQuery!!)
-                }
-
-                if (!isActive) return@launch
-
-                if (result.isNotEmpty()) searchResultLiveData.postValue(result)
-                searchStateLiveData.postValue(Success(false))
-                Timber.d("listScrolled(): We have now ${result.size} items on \"$lastQuery\" query.")
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val result = withContext(Dispatchers.IO) {
+                repoRepository.requestMore(lastQuery!!)
             }
-        }
-    }
 
-    companion object {
-        const val VISIBLE_THRESHOLD = 5
+            if (result.isNotEmpty()) searchResultLiveData.postValue(result)
+            delay(LOADING_MORE_DELAY) // prevent blinking during fast Internet
+            searchStateLiveData.postValue(Success(false))
+        }
     }
 }

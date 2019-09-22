@@ -11,7 +11,7 @@ interface RepoDao {
     @Insert(onConflict = REPLACE)
     suspend fun save(list: List<RepoData>): List<Long>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE (name LIKE :query) OR (description LIKE :query) ORDER BY stars DESC, name ASC;")
+    @Query("SELECT * FROM $TABLE_NAME WHERE (name LIKE :query) OR (description LIKE :query);")
     suspend fun reposByQuery(query: String): List<RepoData>
 
     @Query("DELETE FROM $TABLE_NAME;")

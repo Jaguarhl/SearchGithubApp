@@ -8,7 +8,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.kartsev.dmitry.searchgithubrepos.R
-import com.kartsev.dmitry.searchgithubrepos.databinding.RepoItemBinding
+import com.kartsev.dmitry.searchgithubrepos.databinding.ItemRepoBinding
 
 class RepositoriesAdapter(
     val viewModel: SearchRepoViewModel
@@ -19,10 +19,10 @@ class RepositoriesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepositoryViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<ViewDataBinding>(
-            inflater, R.layout.repo_item, parent, false
+            inflater, R.layout.item_repo, parent, false
         )
 
-        return RepositoryViewHolder(binding as RepoItemBinding)
+        return RepositoryViewHolder(binding as ItemRepoBinding)
     }
 
     override fun onBindViewHolder(holder: RepositoryViewHolder, position: Int) {
