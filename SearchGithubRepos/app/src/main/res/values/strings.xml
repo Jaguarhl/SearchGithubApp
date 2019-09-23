@@ -3,7 +3,7 @@
 
     <string name="fragment_search_hint_search_repo">GitHub Repository</string>
 
-    <string name="loading">Loading more...</string>
+    <string name="loading">Loading more…</string>
     <string name="no_results">No results found for <b>%s</b></string>
     <string name="unknown">\?</string>
 

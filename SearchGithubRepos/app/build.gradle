@@ -51,10 +51,6 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 
-    // Paging library
-    implementation "androidx.paging:paging-runtime:$paging_version"
-    implementation "androidx.paging:paging-runtime-ktx:$paging_version"
-
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
 

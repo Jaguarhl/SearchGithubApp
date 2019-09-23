@@ -82,7 +82,10 @@ class RepoDetailsFragment : Fragment(), Injectable {
 
         repoDetailsViewModel.repoDetailsUIEventState.observe(this, Observer {
             when (it) {
-                is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
+                is Failed -> {
+                    fragmentRepoDetailsProgressLayout.visibility = View.GONE
+                    Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
+                }
             }
         })
     }

@@ -41,15 +41,6 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="64dp"
-            android:layout_height="0dp"
-            android:gravity="center_vertical"
-            app:layout_constraintTop_toTopOf="@id/fragmentSearchRepoInputLayout"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/fragmentSearchRepoInputLayout"
-            tools:text="10117"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fragmentSearchRepoResultsList"
             android:layout_width="0dp"

@@ -25,7 +25,6 @@ import com.kartsev.dmitry.searchgithubrepos.util.autoCleared
 import com.kartsev.dmitry.searchgithubrepos.util.hideKeyboard
 import dagger.android.DispatchingAndroidInjector
 import kotlinx.android.synthetic.main.fragment_search_repo.*
-import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
@@ -111,34 +110,51 @@ class SearchRepoFragment : Fragment(), Injectable {
     private fun initLiveDataObservers() {
         searchRepoViewModel.searchStateLiveData.observe(this, Observer {
             when (it) {
-                is Running -> updateViews(true, it.firstRequest)
-                is Success -> updateViews(false, it.firstRequest)
+                is Running -> {
+                    val mode = if (it.firstRequest) HideMode.FIRST else HideMode.MORE
+                    updateViews(true, mode)
+                }
+                is Success -> {
+                    val mode = if (it.firstRequest) HideMode.FIRST else HideMode.MORE
+                    updateViews(false, mode)
+                }
             }
         })
 
         searchRepoViewModel.searchUIEvents.observe(this, Observer {
             when (it) {
-                is Failed -> Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
+                is Failed -> {
+                    updateViews(visible = false, mode = HideMode.BOTH)
+                    Snackbar.make(rootView, it.message, Snackbar.LENGTH_LONG).show()
+                }
                 is ShowDetailsAction -> navController()
                     .navigate(SearchRepoFragmentDirections.showRepoDetails(it.id, it.owner))
             }
         })
 
         searchRepoViewModel.searchResultLiveData.observe(this, Observer {
-            Timber.d("Submit to adapter ${it.size} items.")
             listAdapter.submitList(it)
         })
     }
 
-    private fun updateViews(visible: Boolean, firstRequest: Boolean) {
+    private fun updateViews(visible: Boolean, mode: HideMode) {
         val flag = if (visible) View.VISIBLE else View.GONE
 
         flag.also {
-            if (firstRequest) {
-                fragmentSearchRepoProgressLayout.visibility = it
-                fragmentSearchRepoResultsList.scrollToPosition(0)
-            } else {
-                fragmentSearchRepoProgressMoreLayout.visibility = it
+            when (mode) {
+                HideMode.FIRST -> {
+                    fragmentSearchRepoProgressLayout.visibility = it
+                    fragmentSearchRepoResultsList.scrollToPosition(0)
+                }
+
+                HideMode.MORE -> {
+                    fragmentSearchRepoProgressMoreLayout.visibility = it
+                }
+
+                HideMode.BOTH -> {
+                    fragmentSearchRepoProgressLayout.visibility = it
+                    fragmentSearchRepoProgressMoreLayout.visibility = it
+                }
             }
         }
     }
@@ -171,5 +187,7 @@ class SearchRepoFragment : Fragment(), Injectable {
 
     companion object {
         const val LAST_QUERY_STRING = "LAST_QUERY_STRING"
+
+        enum class HideMode { FIRST, MORE, BOTH }
     }
 }
